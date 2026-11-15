@@ -28,11 +28,16 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Status
 
-- **Current phase:** 2.5 — save progress to GitHub before phase 3
-- **Last done:** Purge phases 1–2 complete and rebuild-proven.
-- **Next action:** Create `Haezan-real/halluium`, commit pushable progress
-  (purge log + plan; not the 20GB Chromium blob), `e patches` + push
-  Electron, then phase 3.
+- **Current phase:** 3 — purge phase 3 starting
+- **Last done:** Progress synced.
+  - [Haezan-real/halluium](https://github.com/Haezan-real/halluium) — orphan
+    progress repo (plan, purge log, apply script). Full Chromium blob not
+    uploaded (~20GB).
+  - [Haezan-real/electron@hallu-42.11.3](https://github.com/Haezan-real/electron/tree/hallu-42.11.3)
+    — includes `export_the_whole_cached_pass_as_the_image_the_shader_samples.patch`
+    (`901ba42e58`).
+- **Next action:** Phase 3 — remove only trees with zero/near-zero Windows
+  graph use (not wholesale `chromeos`/`ash`/`remoting`). Prove `e build`.
 - **Blocked on:** nothing
 
 ## Paths
