@@ -18,7 +18,13 @@ $remove = @(
   "android_webview",
   "clank",
   "fuchsia_web",
-  "chromecast"
+  "chromecast",
+  "docs",
+  "clusterfuzz-data",
+  "agents",
+  "internal",
+  "signing_keys",
+  "styleguide"
 )
 
 # Never remove these in this script

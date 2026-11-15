@@ -24,6 +24,19 @@ Removed:
 - `fuchsia_web/`
 - `chromecast/`
 
+## Phase 3 (docs / metadata, ~52 MB)
+
+Removed:
+
+- `docs/`
+- `clusterfuzz-data/`
+- `agents/`
+- `internal/`
+- `signing_keys/`
+- `styleguide/`
+
+Skipped (ninja hits): `codelabs/`
+
 ## Explicitly kept
 
 - All **macOS / Darwin / Cocoa** related source
