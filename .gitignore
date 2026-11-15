@@ -1,0 +1,30 @@
+# Build products — never commit
+out/
+**/out/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+*.o
+*.a
+*.so
+*.dylib
+*.pak
+*.bin
+*.map
+runtime/
+node_modules/
+
+# Nested checkouts / caches
+.git_cache/
+.gclient_entries
+.gclient_previous_sync_commits
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+.vscode/
+.idea/
