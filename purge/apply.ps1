@@ -1,5 +1,4 @@
 ﻿# Re-apply halluium platform cuts on a Chromium src directory.
-# Run from anywhere; pass -Src or rely on C:\electron-42\src / C:\halluium\src.
 param(
   [string]$Src = ""
 )
@@ -24,11 +23,77 @@ $remove = @(
   "agents",
   "internal",
   "signing_keys",
-  "styleguide"
+  "styleguide",
+  "third_party\jetstream",
+  "third_party\speedometer",
+  "third_party\apache-windows-arm64",
+  "third_party\nearby",
+  "third_party\androidx",
+  "third_party\androidx_javascriptengine",
+  "third_party\android_build_tools",
+  "third_party\android_deps",
+  "third_party\android_media",
+  "third_party\android_opengl",
+  "third_party\android_platform",
+  "third_party\android_prebuilts",
+  "third_party\android_provider",
+  "third_party\android_sdk",
+  "third_party\android_swipe_refresh",
+  "third_party\android_system_sdk",
+  "third_party\android_toolchain",
+  "third_party\arcore-android-sdk",
+  "third_party\arcore-android-sdk-client",
+  "third_party\byte_buddy",
+  "third_party\fuchsia-gn-sdk",
+  "third_party\fuchsia-sdk",
+  "third_party\hamcrest",
+  "third_party\robolectric",
+  "third_party\perl",
+  "third_party\crossbench",
+  "third_party\crossbench-web-tests",
+  "third_party\webgl",
+  "third_party\checkstyle",
+  "third_party\instrumented_libs",
+  ".github",
+  ".claude",
+  ".gemini",
+  ".agents",
+  "third_party\blink\perf_tests",
+  "third_party\webxr_test_pages",
+  "third_party\apache-win32",
+  "third_party\js_code_coverage",
+  "third_party\nlohmann_json",
+  "third_party\webdriver",
+  "third_party\wpt_tools",
+  "third_party\libpfm4",
+  "third_party\liblouis",
+  "third_party\cldr",
+  "third_party\google_input_tools",
+  "third_party\material_web_components",
+  "third_party\blink\web_tests\platform",
+  "third_party\blink\web_tests\external",
+  "third_party\blink\web_tests\svg",
+  "third_party\blink\web_tests\http",
+  "third_party\blink\web_tests\fast",
+  "third_party\blink\web_tests\images",
+  "third_party\blink\web_tests\virtual",
+  "third_party\blink\web_tests\flag-specific",
+  "third_party\blink\web_tests\editing",
+  "third_party\blink\web_tests\webaudio",
+  "third_party\blink\web_tests\media",
+  "third_party\blink\web_tests\css3",
+  "third_party\blink\web_tests\third_party"
 )
 
-# Never remove these in this script
-$keep = @("chrome\android")
+$keep = @(
+  "chrome\android",
+  "third_party\closure_compiler",
+  "third_party\screen-ai",
+  "third_party\grpc",
+  "third_party\vulkan-validation-layers",
+  "third_party\readability",
+  "third_party\google-closure-library"
+)
 
 foreach ($rel in $remove) {
   $path = Join-Path $Src $rel
@@ -47,4 +112,4 @@ foreach ($rel in $keep) {
   }
 }
 
-Write-Host "Purge apply done. Next: e build --gen only && e build (from real path, not a junction)."
+Write-Host "Purge apply done. Next: e build from C:\electron-42\src (not a junction)."

@@ -28,14 +28,13 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Status
 
-- **Current phase:** 3 — purge phase 3 **complete**
-- **Last done:** Progress synced to GitHub, then phase 3 removed `docs`,
-  `clusterfuzz-data`, `agents`, `internal`, `signing_keys`, `styleguide`.
-  Skipped `codelabs` (ninja hits). `e build` exit 0 (~41 ninja steps).
-  - [Haezan-real/halluium](https://github.com/Haezan-real/halluium)
-  - [Haezan-real/electron@hallu-42.11.3](https://github.com/Haezan-real/electron/tree/hallu-42.11.3) (`901ba42e58`)
-- **Next action:** Sync phase-3 purge notes to halluium GitHub. Next purge
-  only after graph checks (`chromeos`/`ash` still unsafe wholesale).
+- **Current phase:** 8 — more test / tooling cuts (auto-continuing)
+- **Last done:** Phases 1–7 complete; phase 7 cut ~878 MB of
+  `blink/web_tests` bulk + trimmed `chrome/android` (kept
+  `modules/buildflags.gni`). `e build` exit 0. Notes in
+  `C:\halluium-repo\purge\REMOVED.md`.
+- **Next action:** Find next large zero/low-hit trees, delete, prove
+  rebuild, sync halluium GitHub, continue until purge stalls.
 - **Blocked on:** nothing
 
 ## Paths
