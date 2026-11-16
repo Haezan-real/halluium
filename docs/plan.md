@@ -26,22 +26,24 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
   `C:\hallu\bin\hallulium`. Not part of current work.
 - **Keep macOS:** never purge Mac / Darwin / Cocoa source; phone (iOS,
   Android) only for platform cuts.
+- **Purge test (locked):** keep a path only if a **Hallu developer
+  environment** needs it (build + run Hallu). If not needed → delete. If
+  something else in the tree still references it → change that code so
+  Hallu builds without it, then delete. “Chromium/ChromeOS still builds
+  every target” is not a keep reason.
 - **Order:** (1) save pending capture edit (2) rename (3) update configs/docs
   (4) purge in small phases with rebuild proof (5) create orphan GitHub repo
   and push (6) only then RAM/CPU work.
 
 ## Status
 
-- **Current phase:** purge phases 1–9 **complete**; docs repo is
-  `hallulium-docs`
-- **Last done:** Engine folder is `C:\hallulium`. Progress GitHub repo
-  renamed to `Haezan-real/hallulium-docs` (docs only). Build-tools
-  `root` / `CHROMIUM_BUILDTOOLS_PATH` point at `C:\hallulium`. Purge notes
-  in `C:\halluium-repo\purge\REMOVED.md`.
-- **Next action:** Orphan full-tree push to a future `hallulium` engine
-  repo when ready, then RAM/CPU work.
-- **Blocked on:** nothing (safe wholesale purge stalled on keep-list /
-  gn-linked trees)
+- **Current phase:** aggressive purge under the Hallu-dev-env test
+- **Last done:** Phases 1–9 done; engine at `C:\hallulium`; docs repo
+  `Haezan-real/hallulium-docs`. User continuing purge: delete anything
+  not required for a Hallu developer environment (or fix deps then delete).
+- **Next action:** Purge more under that test; prove with `e build` from
+  `C:\hallulium\src` after each risky batch; update purge log.
+- **Blocked on:** nothing
 
 ## Paths
 
@@ -66,14 +68,17 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Purge rules
 
-- One phase at a time (e.g. confirm iOS docs/tests unused → delete → `e build`
-  must still produce a Hallu-running runtime).
-- Do not delete Blink, `cc`, `components/viz`, `gpu`, `v8`, or linked
-  `third_party` for the Windows Electron target.
+- **Hallu-dev-env test** is the gate (see Decisions). Not “does Chromium
+  still know about this folder.”
+- After each risky delete: `e build` from `C:\hallulium\src` must still
+  produce a Hallu-running runtime. If gen/build fails only because of a
+  leftover import/data_dep, fix or stub that reference, then keep it deleted.
+- Expect Hallu still needs core browser pieces (Blink, `cc`, viz, `gpu`,
+  `v8`, and whatever `third_party` those link). Delete them only if you
+  have replaced that need.
 - **Keep all macOS / Darwin / Cocoa related source.** Hallulium may ship on Mac.
-  Do not delete `mac`, `*_mac*`, Apple/Cocoa UI paths, or Mac-only branches of
-  shared libraries just because this machine builds Windows. Phone platforms
-  (iOS, Android) are still purge candidates; desktop Mac is not.
+  Phone platforms (iOS, Android) and ChromeOS-only trees are fair game if
+  Hallu’s Windows/Mac developer build does not need them.
 - Prefer “never checkout” / leave undownloaded over mass `git rm` on the
   long-lived Chromium branch when possible.
 - After each phase: update **Status** here with what was removed and whether
