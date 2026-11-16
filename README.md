@@ -1,19 +1,13 @@
-# Hallulium
+# Hallulium docs
 
-Hallu’s engine: Chromium plus Electron, trimmed for Hallu only.
+Progress notes for **hallulium** (Hallu’s Chromium + Electron engine).
 
-## What this GitHub repo is (for now)
+This repo is **documentation only**: living plan, purge log, and a script that
+re-applies platform cuts. It is **not** the engine source.
 
-This repository stores **hallulium progress you can sync**:
-
-- The living plan and purge log
-- A script that re-applies the platform cuts on a stock Electron/Chromium checkout
-- Pointers to the Electron branch that carries the compositor patches
-
-It does **not** yet contain the full multi‑gigabyte Chromium source tree. That
-tree lives on the build machine at `C:\hallulium`.
-A single orphan push of ~20 GB of Chromium is not practical on GitHub; more
-purge phases came first, then an orphan import of the lean tree is next.
+The engine tree lives on the build machine at `C:\hallulium`. A future
+`Haezan-real/hallulium` repo may hold an orphan import of that tree; this
+repo stays `hallulium-docs`.
 
 ## Pins
 

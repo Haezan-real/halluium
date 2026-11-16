@@ -14,9 +14,11 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 - **Name:** hallulium = the whole engine tree (extra `l`; was briefly
   `halluium` / `C:\electron-42`).
-- **GitHub:** separate repo `Haezan-real/hallulium` (not inside
-  `Haezan-real/hallu`). Old `Haezan-real/halluium` redirects here.
-- **History:** orphan start on that repo later; no Chromium commit chain.
+- **GitHub (docs):** `Haezan-real/hallulium-docs` — plan, purge log, apply
+  script only. Not the Chromium tree. (Earlier names `halluium` /
+  `hallulium` for this docs repo redirect here.)
+- **GitHub (engine, later):** orphan import may go to a separate
+  `Haezan-real/hallulium` when ready; no Chromium commit chain.
 - **Binaries:** never commit `out/`, `*.exe`, `*.dll`, build products; gitignore them.
 - **Hallu git:** never add the hallulium source tree to the Hallu repo.
 - **Disk:** engine lives at `C:\hallulium` (real rename done; no junction).
@@ -30,13 +32,14 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Status
 
-- **Current phase:** purge phases 1–9 **complete**; disk + GitHub rename done
-- **Last done:** Engine folder is `C:\hallulium`. GitHub repo renamed to
-  `Haezan-real/hallulium`. Build-tools `root` / `CHROMIUM_BUILDTOOLS_PATH`
-  point at `C:\hallulium`. Purge notes in
-  `C:\halluium-repo\purge\REMOVED.md` (local progress checkout name
-  unchanged for now).
-- **Next action:** Orphan full-tree push when ready, then RAM/CPU work.
+- **Current phase:** purge phases 1–9 **complete**; docs repo is
+  `hallulium-docs`
+- **Last done:** Engine folder is `C:\hallulium`. Progress GitHub repo
+  renamed to `Haezan-real/hallulium-docs` (docs only). Build-tools
+  `root` / `CHROMIUM_BUILDTOOLS_PATH` point at `C:\hallulium`. Purge notes
+  in `C:\halluium-repo\purge\REMOVED.md`.
+- **Next action:** Orphan full-tree push to a future `hallulium` engine
+  repo when ready, then RAM/CPU work.
 - **Blocked on:** nothing (safe wholesale purge stalled on keep-list /
   gn-linked trees)
 
@@ -50,7 +53,7 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 | Build output (gitignored) | `C:\hallulium\src\out` |
 | Runtime copy | `C:\hallulium\runtime` |
 | Build-tools config | `C:\Users\zeela\.electron_build_tools\configs\evm.hallu-42.json` (`root`) |
-| Progress git checkout | `C:\halluium-repo` → `Haezan-real/hallulium` |
+| Docs / progress git checkout | `C:\halluium-repo` → `Haezan-real/hallulium-docs` |
 | Hallu app | still `...\code\hallu` until a later move |
 
 ## Branches
@@ -84,4 +87,4 @@ After every tool batch that finishes a step:
 2. If the chat is summarized, the next agent reads this file before doing
    anything else to hallulium.
 3. Do not start RAM optimization until Status says purge phases are done and
-   the orphan `Haezan-real/hallulium` repo exists (or is explicitly deferred).
+   the orphan engine repo exists or is explicitly deferred.
