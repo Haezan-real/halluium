@@ -1,25 +1,27 @@
-# Halluium plan
+# Hallulium plan
 
-Agents: if the user is working on halluium, Electron, or Chromium for Hallu,
+Agents: if the user is working on hallulium, Electron, or Chromium for Hallu,
 read this file first and update the **Status** section after every finished
 step. Do not invent a new plan. A chat summary is not the source of truth;
 this file is.
 
 ## Goal
 
-Halluium is Hallu's engine: Chromium plus Electron, owned and trimmed for
+Hallulium is Hallu's engine: Chromium plus Electron, owned and trimmed for
 Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Decisions (locked)
 
-- **Name:** halluium = the whole engine tree (what was `C:\electron-42`).
-- **GitHub:** separate repo `Haezan-real/halluium` (not inside `Haezan-real/hallu`).
+- **Name:** hallulium = the whole engine tree (extra `l`; was briefly
+  `halluium` / `C:\electron-42`).
+- **GitHub:** separate repo `Haezan-real/hallulium` (not inside
+  `Haezan-real/hallu`). Old `Haezan-real/halluium` redirects here.
 - **History:** orphan start on that repo later; no Chromium commit chain.
 - **Binaries:** never commit `out/`, `*.exe`, `*.dll`, build products; gitignore them.
-- **Hallu git:** never add the halluium source tree to the Hallu repo.
-- **Disk (phase 1):** rename `C:\electron-42` → `C:\halluium`.
+- **Hallu git:** never add the hallulium source tree to the Hallu repo.
+- **Disk:** engine lives at `C:\hallulium` (real rename done; no junction).
 - **Disk (later):** optional move Hallu to `C:\hallu` and nest engine at
-  `C:\hallu\bin\halluium`. Not part of phase 1.
+  `C:\hallu\bin\hallulium`. Not part of current work.
 - **Keep macOS:** never purge Mac / Darwin / Cocoa source; phone (iOS,
   Android) only for platform cuts.
 - **Order:** (1) save pending capture edit (2) rename (3) update configs/docs
@@ -28,16 +30,13 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Status
 
-- **Current phase:** purge phases 1–9 **complete** (auto-run finished)
-- **Last done:** Phases 1–9 rebuilt with `e build` exit 0 after each
-  kept batch. Phase 9 only kept `chrome/test/data/dromaeo` + `ocr`
-  (~11 MB); larger tries (`test_fonts`, `updater`,
-  `enterprise_companion`, catapult `vinn`/`gsutil`) restored. Remaining
-  large zero-hit dirs are keep-list (mac, toolchains, ash/chromeos,
-  hunspell_dictionaries, restored grpc/closure/etc.). Notes in
-  `C:\halluium-repo\purge\REMOVED.md`.
-- **Next action:** Optional real rename `C:\electron-42` → `C:\halluium`,
-  orphan full-tree push when ready, then RAM/CPU work.
+- **Current phase:** purge phases 1–9 **complete**; disk + GitHub rename done
+- **Last done:** Engine folder is `C:\hallulium`. GitHub repo renamed to
+  `Haezan-real/hallulium`. Build-tools `root` / `CHROMIUM_BUILDTOOLS_PATH`
+  point at `C:\hallulium`. Purge notes in
+  `C:\halluium-repo\purge\REMOVED.md` (local progress checkout name
+  unchanged for now).
+- **Next action:** Orphan full-tree push when ready, then RAM/CPU work.
 - **Blocked on:** nothing (safe wholesale purge stalled on keep-list /
   gn-linked trees)
 
@@ -45,19 +44,19 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 | Role | Path |
 |---|---|
-| Engine root (human) | `C:\halluium` (junction → `C:\electron-42`) |
-| Engine root (**builds**) | `C:\electron-42` — do not `e build` through the junction |
-| Chromium source | `C:\halluium\src` |
-| Electron nested repo | `C:\halluium\src\electron` |
-| Build output (gitignored) | `C:\halluium\src\out` |
-| Runtime copy | `C:\halluium\runtime` |
+| Engine root (**builds** and human) | `C:\hallulium` |
+| Chromium source | `C:\hallulium\src` |
+| Electron nested repo | `C:\hallulium\src\electron` |
+| Build output (gitignored) | `C:\hallulium\src\out` |
+| Runtime copy | `C:\hallulium\runtime` |
 | Build-tools config | `C:\Users\zeela\.electron_build_tools\configs\evm.hallu-42.json` (`root`) |
+| Progress git checkout | `C:\halluium-repo` → `Haezan-real/hallulium` |
 | Hallu app | still `...\code\hallu` until a later move |
 
 ## Branches
 
-- Chromium: `hallu-no-cursor` in `C:\halluium\src`
-- Electron: `hallu-42.11.3` in `C:\halluium\src\electron` (also on
+- Chromium: `hallu-no-cursor` in `C:\hallulium\src`
+- Electron: `hallu-42.11.3` in `C:\hallulium\src\electron` (also on
   `Haezan-real/electron`)
 - Pending local Chromium edit (must save before purge): whole cached-pass
   export in `components/viz/service/display/surface_aggregator.cc`
@@ -68,7 +67,7 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
   must still produce a Hallu-running runtime).
 - Do not delete Blink, `cc`, `components/viz`, `gpu`, `v8`, or linked
   `third_party` for the Windows Electron target.
-- **Keep all macOS / Darwin / Cocoa related source.** Halluium may ship on Mac.
+- **Keep all macOS / Darwin / Cocoa related source.** Hallulium may ship on Mac.
   Do not delete `mac`, `*_mac*`, Apple/Cocoa UI paths, or Mac-only branches of
   shared libraries just because this machine builds Windows. Phone platforms
   (iOS, Android) are still purge candidates; desktop Mac is not.
@@ -83,6 +82,6 @@ After every tool batch that finishes a step:
 
 1. Update **Status** (`Current phase`, `Last done`, `Next action`).
 2. If the chat is summarized, the next agent reads this file before doing
-   anything else to halluium.
+   anything else to hallulium.
 3. Do not start RAM optimization until Status says purge phases are done and
-   the orphan `Haezan-real/halluium` repo exists (or is explicitly deferred).
+   the orphan `Haezan-real/hallulium` repo exists (or is explicitly deferred).

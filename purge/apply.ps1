@@ -1,4 +1,4 @@
-﻿# Re-apply halluium platform cuts on a Chromium src directory.
+﻿# Re-apply hallulium platform cuts on a Chromium src directory.
 param(
   [string]$Src = ""
 )
@@ -6,8 +6,8 @@ param(
 $ErrorActionPreference = "Stop"
 
 if (-not $Src) {
-  if (Test-Path "C:\electron-42\src") { $Src = "C:\electron-42\src" }
-  elseif (Test-Path "C:\halluium\src") { $Src = "C:\halluium\src" }
+  if (Test-Path "C:\hallulium\src") { $Src = "C:\hallulium\src" }
+  elseif (Test-Path "C:\electron-42\src") { $Src = "C:\electron-42\src" }
   else { throw "Pass -Src to your Chromium src directory." }
 }
 
@@ -128,4 +128,4 @@ foreach ($rel in $keep) {
   }
 }
 
-Write-Host "Purge apply done. Next: e build from C:\electron-42\src (not a junction)."
+Write-Host "Purge apply done. Next: e build from C:\hallulium\src."

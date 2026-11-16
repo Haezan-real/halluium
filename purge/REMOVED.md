@@ -1,4 +1,4 @@
-# Paths removed from the local halluium Chromium tree
+# Paths removed from the local hallulium Chromium tree
 
 Base: Chromium **148.0.7778.280** (Electron 42.11.3).  
 Rebuild proven after each phase with `e build` → `electron.exe` (exit 0).
@@ -137,5 +137,5 @@ Tried and **restored** (gn imports / data_deps):
 ## Apply on a fresh checkout
 
 ```powershell
-powershell -NoProfile -File path\to\halluium\purge\apply.ps1
+powershell -NoProfile -File path\to\hallulium\purge\apply.ps1
 ```
