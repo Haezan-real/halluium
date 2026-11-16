@@ -36,8 +36,8 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
   large zero-hit dirs are keep-list (mac, toolchains, ash/chromeos,
   hunspell_dictionaries, restored grpc/closure/etc.). Notes in
   `C:\halluium-repo\purge\REMOVED.md`.
-- **Next action:** Sync phase 8–9 notes to halluium GitHub. Later:
-  optional real rename, orphan full-tree push when ready, then RAM/CPU.
+- **Next action:** Optional real rename `C:\electron-42` → `C:\halluium`,
+  orphan full-tree push when ready, then RAM/CPU work.
 - **Blocked on:** nothing (safe wholesale purge stalled on keep-list /
   gn-linked trees)
 
