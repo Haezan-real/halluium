@@ -82,7 +82,18 @@ $remove = @(
   "third_party\blink\web_tests\webaudio",
   "third_party\blink\web_tests\media",
   "third_party\blink\web_tests\css3",
-  "third_party\blink\web_tests\third_party"
+  "third_party\blink\web_tests\third_party",
+  "chrome\test\data\android",
+  "chrome\test\data\extensions",
+  "chrome\test\data\image_decoding",
+  "chrome\test\data\import",
+  "chrome\test\data\page_cycler",
+  "chrome\test\data\perf",
+  "chrome\test\data\safe_browsing",
+  "chrome\test\data\xr",
+  "chrome\browser\resources\chromeos",
+  "chrome\test\data\dromaeo",
+  "chrome\test\data\ocr"
 )
 
 $keep = @(
@@ -92,7 +103,12 @@ $keep = @(
   "third_party\grpc",
   "third_party\vulkan-validation-layers",
   "third_party\readability",
-  "third_party\google-closure-library"
+  "third_party\google-closure-library",
+  "third_party\test_fonts",
+  "third_party\updater",
+  "third_party\enterprise_companion",
+  "third_party\catapult\third_party\vinn",
+  "third_party\catapult\third_party\gsutil"
 )
 
 foreach ($rel in $remove) {

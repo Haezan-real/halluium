@@ -28,14 +28,18 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Status
 
-- **Current phase:** 8 — more test / tooling cuts (auto-continuing)
-- **Last done:** Phases 1–7 complete; phase 7 cut ~878 MB of
-  `blink/web_tests` bulk + trimmed `chrome/android` (kept
-  `modules/buildflags.gni`). `e build` exit 0. Notes in
+- **Current phase:** purge phases 1–9 **complete** (auto-run finished)
+- **Last done:** Phases 1–9 rebuilt with `e build` exit 0 after each
+  kept batch. Phase 9 only kept `chrome/test/data/dromaeo` + `ocr`
+  (~11 MB); larger tries (`test_fonts`, `updater`,
+  `enterprise_companion`, catapult `vinn`/`gsutil`) restored. Remaining
+  large zero-hit dirs are keep-list (mac, toolchains, ash/chromeos,
+  hunspell_dictionaries, restored grpc/closure/etc.). Notes in
   `C:\halluium-repo\purge\REMOVED.md`.
-- **Next action:** Find next large zero/low-hit trees, delete, prove
-  rebuild, sync halluium GitHub, continue until purge stalls.
-- **Blocked on:** nothing
+- **Next action:** Sync phase 8–9 notes to halluium GitHub. Later:
+  optional real rename, orphan full-tree push when ready, then RAM/CPU.
+- **Blocked on:** nothing (safe wholesale purge stalled on keep-list /
+  gn-linked trees)
 
 ## Paths
 

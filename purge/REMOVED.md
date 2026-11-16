@@ -98,6 +98,35 @@ Removed (~878 MB from `third_party/blink/web_tests/`):
 Trimmed `chrome/android/` (~42 MB) while keeping `modules/buildflags.gni`
 (and the `modules/` tree, `BUILD.gn`, `DEPS`).
 
+## Phase 8 (chrome test data / chromeos resources)
+
+Removed (~255 MB):
+
+- `chrome/test/data/android/`
+- `chrome/test/data/extensions/`
+- `chrome/test/data/image_decoding/`
+- `chrome/test/data/import/`
+- `chrome/test/data/page_cycler/`
+- `chrome/test/data/perf/`
+- `chrome/test/data/safe_browsing/`
+- `chrome/test/data/xr/`
+- `chrome/browser/resources/chromeos/`
+
+## Phase 9 (small leftover test data)
+
+Removed (~11 MB):
+
+- `chrome/test/data/dromaeo/`
+- `chrome/test/data/ocr/`
+
+Tried and **restored** (gn imports / data_deps):
+
+- `third_party/test_fonts/` — `skia/BUILD.gn`, `pdfium/testing`
+- `third_party/updater/` — chrome updater graph
+- `third_party/enterprise_companion/` — `chrome/enterprise_companion`
+- `third_party/catapult/third_party/vinn/` — `catapult/tracing`
+- `third_party/catapult/third_party/gsutil/` — `chrome/test/variations`
+
 ## Explicitly kept
 
 - All **macOS / Darwin / Cocoa** related source (including `libdmg-hfsplus`)
