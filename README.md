@@ -23,4 +23,4 @@ repo stays `hallulium-docs`.
 
 ## Build rule
 
-On Windows, run `e build` from `C:\hallulium\src`.
+On Windows, run `e build` from `C:\hallulium\src`. Ninja still emits `electron.exe`; rename it to `hallulium.exe` and sync that plus the companion dlls/paks into `C:\hallulium\runtime` and Hallu `bin\node_modules\electron\dist` (set `path.txt` to `hallulium.exe`).

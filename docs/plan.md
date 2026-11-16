@@ -38,11 +38,13 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 ## Status
 
 - **Current phase:** aggressive purge under the Hallu-dev-env test
-- **Last done:** Phases 1–9 done; engine at `C:\hallulium`; docs repo
-  `Haezan-real/hallulium-docs`. User continuing purge: delete anything
-  not required for a Hallu developer environment (or fix deps then delete).
-- **Next action:** Purge more under that test; prove with `e build` from
-  `C:\hallulium\src` after each risky batch; update purge log.
+- **Last done:** Fresh `e build` after rename path fix; Hallu live-smoke
+  passed on the new binary. Built exe renamed to **`hallulium.exe`**
+  (also in `runtime/` and Hallu `node_modules/electron/dist/` via
+  `path.txt`).
+- **Next action:** Keep purging under the Hallu-dev-env test; after each
+  engine build, sync `out/Release` runtime files into `runtime/` and
+  Hallu `dist` as **`hallulium.exe`** (not `electron.exe`).
 - **Blocked on:** nothing
 
 ## Paths
@@ -53,7 +55,9 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 | Chromium source | `C:\hallulium\src` |
 | Electron nested repo | `C:\hallulium\src\electron` |
 | Build output (gitignored) | `C:\hallulium\src\out` |
-| Runtime copy | `C:\hallulium\runtime` |
+| Built host binary | `C:\hallulium\src\out\Release\hallulium.exe` (rename from ninja’s `electron.exe` after build) |
+| Runtime copy | `C:\hallulium\runtime\` (`hallulium.exe` + dlls/paks) |
+| Hallu uses | `hallu/bin/node_modules/electron/dist/hallulium.exe` (`path.txt` = `hallulium.exe`) |
 | Build-tools config | `C:\Users\zeela\.electron_build_tools\configs\evm.hallu-42.json` (`root`) |
 | Docs / progress git checkout | `C:\halluium-repo` → `Haezan-real/hallulium-docs` |
 | Hallu app | still `...\code\hallu` until a later move |
