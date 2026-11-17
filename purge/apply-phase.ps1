@@ -49,7 +49,7 @@ function Apply-FixMarkdown([string]$FixPath, [string]$SrcRoot) {
       # skip blanks
       while ($i -lt $lines.Length -and $lines[$i] -match '^\s*$') { $i++ }
       if ($i -ge $lines.Length -or $lines[$i] -notmatch '^```') {
-        throw "Stub $rel in $FixPath: expected fenced code block"
+        throw "Stub $rel in ${FixPath}: expected fenced code block"
       }
       $i++ # past opening fence
       $body = New-Object System.Collections.Generic.List[string]
@@ -57,7 +57,7 @@ function Apply-FixMarkdown([string]$FixPath, [string]$SrcRoot) {
         [void]$body.Add($lines[$i])
         $i++
       }
-      if ($i -ge $lines.Length) { throw "Stub $rel in $FixPath: unclosed fence" }
+      if ($i -ge $lines.Length) { throw "Stub $rel in ${FixPath}: unclosed fence" }
       $i++ # past closing fence
       $dest = Join-Path $SrcRoot $rel
       $dir = Split-Path -Parent $dest

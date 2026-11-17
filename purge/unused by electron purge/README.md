@@ -16,6 +16,16 @@ node "purge/unused by electron purge/scan-unrelated.mjs"
 node "purge/unused by electron purge/scan-fixes.mjs"
 ```
 
-Delete in batches with keep-overrides subtracted and reference fixes applied;
-prove `e build` each batch. Add new `phase-*` folders under this stage as
-batches complete.
+Delete in batches with keep-overrides subtracted and stubs from the reference
+fix map. **Do not wait for a full `e build` per batch** — one giant compile
+at the end (optional cheap `gn gen` between large batches). Cost: harder to
+bisect a final failure.
+
+## Phases
+
+| Phase | Folder | Status |
+|---|---|---|
+| 01 | [`phase-01-headless/`](phase-01-headless/) | Done (~6 MB) |
+| 02 | [`phase-02-remoting/`](phase-02-remoting/) | Done (~14 MB) |
+| 03 | [`phase-03-testing/`](phase-03-testing/) | Done (~16 MB) |
+| 04 | [`phase-04-ash-chromeos-apps-rlz/`](phase-04-ash-chromeos-apps-rlz/) | Done (~145 MB) |
