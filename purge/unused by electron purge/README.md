@@ -30,3 +30,4 @@ bisect a final failure.
 | 03 | [`phase-03-testing/`](phase-03-testing/) | Done (~16 MB) |
 | 04 | [`phase-04-ash-chromeos-apps-rlz/`](phase-04-ash-chromeos-apps-rlz/) | Done (~145 MB) |
 | 05 | [`phase-05-third-party-tools/`](phase-05-third-party-tools/) | Done (~700+ MB tflite/tools/etc.) |
+| 06 | [`phase-06-tools-chrome-test/`](phase-06-tools-chrome-test/) | Done (~85+ MB chrome/test + tools) |
