@@ -12,8 +12,8 @@ import { fileURLToPath } from 'node:url';
 const SRC = process.env.HALLULIUM_SRC || 'C:\\hallulium\\src';
 const OUT = path.join(SRC, 'out', 'Release');
 const NINJA = path.join(SRC, 'third_party', 'ninja', 'ninja.exe');
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT_MD = path.join(ROOT, 'purge', 'unrelated code purge.md');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const OUT_MD = path.join(ROOT, 'purge', 'unused by electron purge', 'unrelated code purge.md');
 
 const KEEP_PATH_RE =
   /(^|\/|\\)(mac|macos|darwin|cocoa|appkit|metal|ios(?!_internal)|rust-toolchain|llvm-build|depot_tools|siso|buildtools)(\/|\\|$)/i;

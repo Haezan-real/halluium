@@ -2,24 +2,23 @@
 
 Progress notes for **hallulium** (Hallu’s Chromium + Electron engine).
 
-This repo is **documentation only**: living plan, purge log, unrelated-code
-scan, and a script that re-applies platform cuts. It is **not** the engine
-source.
+This repo is **documentation only**: living plan and purge stages. It is **not**
+the engine source.
 
-See [`purge/unrelated code purge.md`](purge/unrelated%20code%20purge.md) for a
-full file list of `src/` paths that are not ninja inputs of the Release
-`electron.exe` target (minus macOS/toolchain policy keeps).
+## Purge
 
-Cut-and-fix maps (regen with `node purge/scan-fixes.mjs`):
+See [`purge/README.md`](purge/README.md). Work is split into **stages**:
 
-- [`purge/unrelated code purge keep overrides.md`](purge/unrelated%20code%20purge%20keep%20overrides.md)
-  — delete-scan false negatives to leave on disk
-- [`purge/unrelated code purge reference fix.md`](purge/unrelated%20code%20purge%20reference%20fix.md)
-  — GN dep/source/label edits for trees you remove
+| Stage | Path |
+|---|---|
+| Phone purge (phases 01–11 + extra) | [`purge/phone purge/`](purge/phone%20purge/) |
+| Unused by electron (scan maps) | [`purge/unused by electron purge/`](purge/unused%20by%20electron%20purge/) |
 
-The engine tree lives on the build machine at `C:\hallulium`. A future
-`Haezan-real/hallulium` repo may hold an orphan import of that tree; this
-repo stays `hallulium-docs`.
+Each phone-purge **phase** has `REMOVED.md`, `apply.ps1`, and optional `fix.md`.
+
+```powershell
+powershell -NoProfile -File purge\apply.ps1
+```
 
 ## Pins
 
@@ -36,3 +35,7 @@ repo stays `hallulium-docs`.
 ## Build rule
 
 On Windows, run `e build` from `C:\hallulium\src`. Ninja still emits `electron.exe`; rename it to `hallulium.exe` and sync that plus the companion dlls/paks into `C:\hallulium\runtime` and Hallu `bin\node_modules\electron\dist` (set `path.txt` to `hallulium.exe`).
+
+The engine tree lives on the build machine at `C:\hallulium`. A future
+`Haezan-real/hallulium` repo may hold an orphan import of that tree; this
+repo stays `hallulium-docs`.
