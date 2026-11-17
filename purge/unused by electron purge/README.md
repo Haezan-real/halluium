@@ -33,3 +33,6 @@ bisect a final failure.
 | 06 | [`phase-06-tools-chrome-test/`](phase-06-tools-chrome-test/) | Done (~85+ MB chrome/test + tools) |
 | 07 | [`phase-07-test-trees/`](phase-07-test-trees/) | Done (~870 MB content/media/v8 tests) |
 | 08 | [`phase-08-nested-vendor-tests/`](phase-08-nested-vendor-tests/) | Done (~1.5+ GB vendor test data) |
+| 09 | [`phase-09-angle-cts-openscreen-electron/`](phase-09-angle-cts-openscreen-electron/) | Done (~2.2+ GB VK-GL-CTS / openscreen llvm / electron fluff) |
+| 10 | [`phase-10-swiftshader-llvm16-chrome-phone/`](phase-10-swiftshader-llvm16-chrome-phone/) | Done (~350+ MB llvm-16 / cast / chrome phone) |
+| 11 | [`phase-11-webnn-litert-ml/`](phase-11-webnn-litert-ml/) | Done (~200+ MB litert / tflite_support / webnn / ML) |
