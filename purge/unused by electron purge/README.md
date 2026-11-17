@@ -31,3 +31,4 @@ bisect a final failure.
 | 04 | [`phase-04-ash-chromeos-apps-rlz/`](phase-04-ash-chromeos-apps-rlz/) | Done (~145 MB) |
 | 05 | [`phase-05-third-party-tools/`](phase-05-third-party-tools/) | Done (~700+ MB tflite/tools/etc.) |
 | 06 | [`phase-06-tools-chrome-test/`](phase-06-tools-chrome-test/) | Done (~85+ MB chrome/test + tools) |
+| 07 | [`phase-07-test-trees/`](phase-07-test-trees/) | Done (~870 MB content/media/v8 tests) |
