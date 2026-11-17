@@ -36,3 +36,6 @@ bisect a final failure.
 | 09 | [`phase-09-angle-cts-openscreen-electron/`](phase-09-angle-cts-openscreen-electron/) | Done (~2.2+ GB VK-GL-CTS / openscreen llvm / electron fluff) |
 | 10 | [`phase-10-swiftshader-llvm16-chrome-phone/`](phase-10-swiftshader-llvm16-chrome-phone/) | Done (~350+ MB llvm-16 / cast / chrome phone) |
 | 11 | [`phase-11-webnn-litert-ml/`](phase-11-webnn-litert-ml/) | Done (~200+ MB litert / tflite_support / webnn / ML) |
+| 12 | [`phase-12-pgo-profiles/`](phase-12-pgo-profiles/) | Done (~1.0 GB; `chrome_pgo_phase = 0`) |
+| 13 | [`phase-13-chrome-browser-app/`](phase-13-chrome-browser-app/) | Done (~224 MB selective; keep-overrides preserved) |
+| 14 | [`phase-14-reference-fixes/`](phase-14-reference-fixes/) | Done (pre-stub missing BUILD/gni/sources before e build) |
