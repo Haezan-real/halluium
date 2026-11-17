@@ -2,8 +2,13 @@
 
 Progress notes for **hallulium** (Hallu’s Chromium + Electron engine).
 
-This repo is **documentation only**: living plan, purge log, and a script that
-re-applies platform cuts. It is **not** the engine source.
+This repo is **documentation only**: living plan, purge log, unrelated-code
+scan, and a script that re-applies platform cuts. It is **not** the engine
+source.
+
+See [`purge/unrelated code purge.md`](purge/unrelated%20code%20purge.md) for a
+full file list of `src/` paths that are not ninja inputs of the Release
+`electron.exe` target (minus macOS/toolchain policy keeps).
 
 The engine tree lives on the build machine at `C:\hallulium`. A future
 `Haezan-real/hallulium` repo may hold an orphan import of that tree; this

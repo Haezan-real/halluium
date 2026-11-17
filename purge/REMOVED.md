@@ -127,10 +127,36 @@ Tried and **restored** (gn imports / data_deps):
 - `third_party/catapult/third_party/vinn/` — `catapult/tracing`
 - `third_party/catapult/third_party/gsutil/` — `chrome/test/variations`
 
+## Phase 10 (zero electron_app hits)
+
+Removed (~85 MB; `e build` OK):
+
+- `third_party/webgpu-cts/` (~56 MB) — stub `BUILD.gn` left
+- `infra/` (~11 MB) — stub `infra/orchestrator/`
+- `components/exo/` (~3 MB)
+- `ui/chromeos/` (~10 MB)
+- `ui/file_manager/` (~5 MB)
+- `codelabs/` — stub `BUILD.gn` left
+
+Tried and **restored**:
+
+- `chrome/updater/` — deep GN imports (`zip.gni`, branding, browser_sources)
+
+## Phase 11 (large unused third_party)
+
+Removed (~784 MB; gen green, build pending at write time):
+
+- `third_party/catapult/` (~519 MB) — stub BUILD.gn trees for telemetry/devil/tracing/gsutil/typ
+- `third_party/hunspell_dictionaries/` (~265 MB) — stub BUILD.gn
+
+Also this session (separate from numbered phases): DevTools frontend
+deleted; password_manager Chrome UI + `core/browser` impl hollowed.
+
 ## Explicitly kept
 
 - All **macOS / Darwin / Cocoa** related source (including `libdmg-hfsplus`)
-- `chromeos/`, `ash/`, `remoting/`
+- `chromeos/`, `ash/`, `remoting/` (still have electron_app path hits;
+  revisit with fix-then-delete)
 - Build toolchains (`rust-toolchain`, `llvm-build`, `depot_tools`, `siso`)
 - Blink, `cc`, `components/viz`, `gpu`, `v8`, linked `third_party`
 
