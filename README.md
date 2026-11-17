@@ -10,10 +10,12 @@ See [`purge/unrelated code purge.md`](purge/unrelated%20code%20purge.md) for a
 full file list of `src/` paths that are not ninja inputs of the Release
 `electron.exe` target (minus macOS/toolchain policy keeps).
 
-See [`purge/unrelated code purge fixes.md`](purge/unrelated%20code%20purge%20fixes.md)
-for the cut-and-fix map: keep-overrides (headers/`.gni` the delete scan
-missed) plus GN dep/source edits so `e build` still works after that purge.
-Regenerate with `node purge/scan-fixes.mjs`.
+Cut-and-fix maps (regen with `node purge/scan-fixes.mjs`):
+
+- [`purge/unrelated code purge keep overrides.md`](purge/unrelated%20code%20purge%20keep%20overrides.md)
+  — delete-scan false negatives to leave on disk
+- [`purge/unrelated code purge reference fix.md`](purge/unrelated%20code%20purge%20reference%20fix.md)
+  — GN dep/source/label edits for trees you remove
 
 The engine tree lives on the build machine at `C:\hallulium`. A future
 `Haezan-real/hallulium` repo may hold an orphan import of that tree; this

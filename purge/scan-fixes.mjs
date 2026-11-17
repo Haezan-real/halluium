@@ -1,6 +1,7 @@
 /**
- * Emit "unrelated code purge fixes.md": what must change (or be kept)
- * for Hallulium to still `e build` after deleting scan-unrelated candidates.
+ * Emit two markdowns for the unrelated-code purge:
+ * - "unrelated code purge keep overrides.md" — subtract from delete set
+ * - "unrelated code purge reference fix.md" — GN dep/source/label edits
  *
  * Philosophy (cut-and-fix):
  * - If a ninja-needed source #includes a "delete candidate", that header is
@@ -18,7 +19,9 @@ const SRC = process.env.HALLULIUM_SRC || 'C:\\hallulium\\src';
 const OUT = path.join(SRC, 'out', 'Release');
 const NINJA = path.join(SRC, 'third_party', 'ninja', 'ninja.exe');
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT_MD = path.join(ROOT, 'purge', 'unrelated code purge fixes.md');
+const OUT_KEEP = path.join(ROOT, 'purge', 'unrelated code purge keep overrides.md');
+const OUT_FIX = path.join(ROOT, 'purge', 'unrelated code purge reference fix.md');
+const OUT_OLD = path.join(ROOT, 'purge', 'unrelated code purge fixes.md');
 
 const KEEP_PATH_RE =
   /(^|\/|\\)(mac|macos|darwin|cocoa|appkit|metal|ios(?!_internal)|rust-toolchain|llvm-build|depot_tools|siso|buildtools)(\/|\\|$)/i;
@@ -365,68 +368,9 @@ function main() {
   }
   const gnDeletedRows = [...gnDeleted.entries()].sort((a, b) => b[1].count - a[1].count);
 
-  const lines = [];
-  lines.push('# Unrelated code purge fixes');
-  lines.push('');
-  lines.push('What to change in `src/` (or **keep** despite the delete scan) so');
-  lines.push('Hallulium still `e build`s after the purge in');
-  lines.push('[`unrelated code purge.md`](unrelated%20code%20purge.md).');
-  lines.push('');
-  lines.push('## Cut-and-fix model');
-  lines.push('');
-  lines.push('The delete scan is `walk(src) − ninja −t inputs(electron.exe) −');
-  lines.push('policy`. That under-lists real compile inputs (especially headers),');
-  lines.push('so many “delete candidates” are still required.');
-  lines.push('');
-  lines.push('| Situation | What to do |');
-  lines.push('|---|---|');
-  lines.push('| Ninja-needed `.cc` / `.h` `#include`s a delete-candidate file | **Keep** that file (ninja-inputs miss many headers), *or* rewrite/delete the includer |');
-  lines.push('| Needed-dir `BUILD.gn` `import()`s a delete-candidate `.gni` | **Keep** the `.gni`, *or* remove/gate the import and stub |');
-  lines.push('| Needed-dir target `deps` a package with **zero** needed files | Drop the dep, or stub an empty `BUILD.gn` group |');
-  lines.push('| Needed-dir `BUILD.gn` lists delete-candidate relative `sources` | Clear unused sibling targets, or leave empty stub files |');
-  lines.push('');
-  lines.push('Deleting the ~11 GB does **not** shrink `hallulium.exe` / DLLs.');
-  lines.push('These edits only keep `gn gen` / compile green.');
-  lines.push('');
-  lines.push(`Generated: ${new Date().toISOString()}`);
-  lines.push('');
-  lines.push('## Stats');
-  lines.push('');
-  lines.push('| Metric | Count |');
-  lines.push('|---|---:|');
-  lines.push(`| Delete candidates | ${deleteFiles.size} |`);
-  lines.push(`| Keep files (ninja + policy) | ${keepFiles.length} |`);
-  lines.push(`| Ninja-needed sources scanned for includes | ${sourcesScanned} |`);
-  lines.push(`| Import-keep edges (folded into overrides) | ${importKeepEdges} |`);
-  lines.push(`| **Keep-override files** | **${keepOverrides.size}** |`);
-  lines.push(`| Build files scanned (needed dirs) | ${buildScanned} |`);
-  lines.push(`| **GN edit hits** | **${uniqueGn.length}** |`);
-  lines.push(`| Build files with GN edit hits | ${byFile.size} |`);
-  lines.push('');
-  lines.push('### GN edit hits by type');
-  lines.push('');
-  lines.push('| Type | Count | Typical fix |');
-  lines.push('|---|---:|---|');
-  for (const [t, n] of [...byType.entries()].sort((a, b) => b[1] - a[1])) {
-    lines.push(`| \`${t}\` | ${n} | ${fixAdvice(t)} |`);
-  }
-  lines.push('');
+  const generated = new Date().toISOString();
+  const edgeTotal = [...keepOverrides.values()].reduce((a, s) => a + s.size, 0);
 
-  // ----- Part 1: keep overrides -----
-  lines.push('## Part 1 — Keep overrides (subtract from the purge)');
-  lines.push('');
-  lines.push('Delete-candidate paths still required because a ninja-needed');
-  lines.push('source `#include`s them or a needed-dir build file `import()`s');
-  lines.push('them. Default action: **do not delete**. Cut-and-fix only if you');
-  lines.push('also remove every includer/import.');
-  lines.push('');
-  lines.push(`Total: **${keepOverrides.size}** files, ` +
-    `${[...keepOverrides.values()].reduce((a, s) => a + s.size, 0)} reference edges.`);
-  lines.push('');
-  lines.push('### By directory prefix');
-  lines.push('');
-  lines.push('| Prefix | Files to keep | Edges |');
-  lines.push('|---|---:|---:|');
   // recompute prefixes after import-keep fold
   overrideByPrefix.clear();
   for (const [hdr, includers] of keepOverrides) {
@@ -437,68 +381,137 @@ function main() {
     o.headers++;
     o.edges += includers.size;
   }
+
+  // ----- keep overrides file -----
+  const keepLines = [];
+  keepLines.push('# Unrelated code purge keep overrides');
+  keepLines.push('');
+  keepLines.push('Delete-candidate paths that must **stay on disk** so Hallulium');
+  keepLines.push('still `e build`s after the purge in');
+  keepLines.push('[`unrelated code purge.md`](unrelated%20code%20purge.md).');
+  keepLines.push('');
+  keepLines.push('These are files the delete scan marked unused, but a ninja-needed');
+  keepLines.push('source still `#include`s them or a needed-dir build file still');
+  keepLines.push('`import()`s them (`ninja -t inputs` misses many headers / `.gni`).');
+  keepLines.push('');
+  keepLines.push('Default action: **subtract from the purge**. Only delete one if');
+  keepLines.push('you also remove every referencer (cut-and-fix).');
+  keepLines.push('');
+  keepLines.push('Companion: [`unrelated code purge reference fix.md`](unrelated%20code%20purge%20reference%20fix.md)');
+  keepLines.push('(GN dep/source/label edits for trees you do remove).');
+  keepLines.push('');
+  keepLines.push(`Generated: ${generated}`);
+  keepLines.push('');
+  keepLines.push('## Stats');
+  keepLines.push('');
+  keepLines.push('| Metric | Count |');
+  keepLines.push('|---|---:|');
+  keepLines.push(`| Delete candidates | ${deleteFiles.size} |`);
+  keepLines.push(`| Keep files (ninja + policy) | ${keepFiles.length} |`);
+  keepLines.push(`| Ninja-needed sources scanned for includes | ${sourcesScanned} |`);
+  keepLines.push(`| Import-keep edges | ${importKeepEdges} |`);
+  keepLines.push(`| **Keep-override files** | **${keepOverrides.size}** |`);
+  keepLines.push(`| Reference edges | ${edgeTotal} |`);
+  keepLines.push('');
+  keepLines.push('An **edge** is one `#include` or `import()` from a kept file to');
+  keepLines.push('a keep-override path.');
+  keepLines.push('');
+  keepLines.push('## By directory prefix');
+  keepLines.push('');
+  keepLines.push('| Prefix | Files to keep | Edges |');
+  keepLines.push('|---|---:|---:|');
   for (const [p, o] of [...overrideByPrefix.entries()].sort((a, b) => b[1].headers - a[1].headers)) {
-    lines.push(`| \`${p}/\` | ${o.headers} | ${o.edges} |`);
+    keepLines.push(`| \`${p}/\` | ${o.headers} | ${o.edges} |`);
   }
-  lines.push('');
-  lines.push('### Full keep-override list');
-  lines.push('');
-  lines.push('Format: `path` ← `referencer` [, more…]');
-  lines.push('');
-  lines.push('```');
+  keepLines.push('');
+  keepLines.push('## Full keep-override list');
+  keepLines.push('');
+  keepLines.push('Format: `path` ← `referencer` [, more…]');
+  keepLines.push('');
+  keepLines.push('```');
   for (const [hdr, includers] of [...keepOverrides.entries()].sort((a, b) =>
     a[0].localeCompare(b[0]),
   )) {
     const list = [...includers].sort();
     const shown = list.slice(0, 5).join(', ');
     const more = list.length > 5 ? ` (+${list.length - 5} more)` : '';
-    lines.push(`${hdr}  ←  ${shown}${more}`);
+    keepLines.push(`${hdr}  ←  ${shown}${more}`);
   }
-  lines.push('```');
-  lines.push('');
+  keepLines.push('```');
+  keepLines.push('');
 
-  // ----- Part 2: GN fixes -----
-  lines.push('## Part 2 — GN / build-file edits');
-  lines.push('');
-  lines.push('References from `BUILD.gn` / `*.gni` / `DEPS` that live in directories');
-  lines.push('containing ninja-needed files (ninja `-t inputs` omits most');
-  lines.push('`BUILD.gn`, but gn still loads them). These are the import-path /');
-  lines.push('dep fixes. A build file that is itself a delete candidate usually');
-  lines.push('becomes a **hollow stub** rather than being deleted outright.');
-  lines.push('');
-  lines.push('### Deleted paths most often named');
-  lines.push('');
-  lines.push('| Deleted path | Hits | Types | Kept files |');
-  lines.push('|---|---:|---|---|');
+  // ----- reference fix file -----
+  const fixLines = [];
+  fixLines.push('# Unrelated code purge reference fix');
+  fixLines.push('');
+  fixLines.push('GN / build-file edits so Hallulium still `e build`s after deleting');
+  fixLines.push('candidates in [`unrelated code purge.md`](unrelated%20code%20purge.md)');
+  fixLines.push('(minus [`keep overrides`](unrelated%20code%20purge%20keep%20overrides.md)).');
+  fixLines.push('');
+  fixLines.push('References from `BUILD.gn` / `*.gni` / `DEPS` in directories that');
+  fixLines.push('contain ninja-needed files, pointing at packages with **zero**');
+  fixLines.push('needed files or at delete-candidate relative sources.');
+  fixLines.push('');
+  fixLines.push('| Situation | What to do |');
+  fixLines.push('|---|---|');
+  fixLines.push('| Target `deps` a package with zero needed files | Drop the dep, or stub an empty `BUILD.gn` group |');
+  fixLines.push('| `BUILD.gn` lists delete-candidate relative `sources` | Clear unused sibling targets, or leave empty stub files |');
+  fixLines.push('| `//` label / `data` names a purged path | Remove, stub, or narrow the condition |');
+  fixLines.push('');
+  fixLines.push('Deleting unused src does **not** shrink `hallulium.exe` / DLLs.');
+  fixLines.push('These edits only keep `gn gen` / compile green.');
+  fixLines.push('');
+  fixLines.push(`Generated: ${generated}`);
+  fixLines.push('');
+  fixLines.push('## Stats');
+  fixLines.push('');
+  fixLines.push('| Metric | Count |');
+  fixLines.push('|---|---:|');
+  fixLines.push(`| Delete candidates | ${deleteFiles.size} |`);
+  fixLines.push(`| Build files scanned (needed dirs) | ${buildScanned} |`);
+  fixLines.push(`| **GN edit hits** | **${uniqueGn.length}** |`);
+  fixLines.push(`| Build files with GN edit hits | ${byFile.size} |`);
+  fixLines.push('');
+  fixLines.push('### Hits by type');
+  fixLines.push('');
+  fixLines.push('| Type | Count | Typical fix |');
+  fixLines.push('|---|---:|---|');
+  for (const [t, n] of [...byType.entries()].sort((a, b) => b[1] - a[1])) {
+    fixLines.push(`| \`${t}\` | ${n} | ${fixAdvice(t)} |`);
+  }
+  fixLines.push('');
+  fixLines.push('## Deleted paths most often named');
+  fixLines.push('');
+  fixLines.push('| Deleted path | Hits | Types | Kept files |');
+  fixLines.push('|---|---:|---|---|');
   for (const [d, info] of gnDeletedRows.slice(0, 200)) {
     const types = [...info.types].sort().join(', ');
     const examples = [...info.files].sort().slice(0, 2).map((f) => `\`${f}\``).join(', ');
     const more = info.files.size > 2 ? ` (+${info.files.size - 2})` : '';
-    lines.push(`| \`${d}\` | ${info.count} | ${types} | ${examples}${more} |`);
+    fixLines.push(`| \`${d}\` | ${info.count} | ${types} | ${examples}${more} |`);
   }
   if (gnDeletedRows.length > 200) {
-    lines.push('');
-    lines.push(`*(${gnDeletedRows.length - 200} more deleted paths omitted from this table; see per-file list.)*`);
+    fixLines.push('');
+    fixLines.push(`*(${gnDeletedRows.length - 200} more deleted paths omitted from this table; see per-file list.)*`);
   }
-  lines.push('');
-  lines.push('### Relative `sources` / `data` summaries');
-  lines.push('');
-  lines.push('Kept `BUILD.gn` files that list many delete-candidate relative');
-  lines.push('paths (usually unused sibling targets). Fix by clearing those');
-  lines.push('targets or stubbing files — not by keeping all sources.');
-  lines.push('');
-  lines.push('| Kept BUILD file | Relative-source hits |');
-  lines.push('|---|---:|');
+  fixLines.push('');
+  fixLines.push('## Relative `sources` / `data` summaries');
+  fixLines.push('');
+  fixLines.push('Build files that list many delete-candidate relative paths');
+  fixLines.push('(usually unused sibling targets). Fix by clearing those targets');
+  fixLines.push('or stubbing files — not by keeping all sources.');
+  fixLines.push('');
+  fixLines.push('| BUILD file | Relative-source hits |');
+  fixLines.push('|---|---:|');
   for (const [f, hs] of [...relSourceByBuild.entries()].sort((a, b) => b[1].length - a[1].length)) {
-    lines.push(`| \`${f}\` | ${hs.length} |`);
+    fixLines.push(`| \`${f}\` | ${hs.length} |`);
   }
-  lines.push('');
-  lines.push('### Per-file fix list (deps / labels / source-or-data only)');
-  lines.push('');
-  lines.push('`relative-source` hits are summarized above (too many to list).');
-  lines.push('Below: import-path style edits — drop dep/label or stub the');
-  lines.push('deleted package.');
-  lines.push('');
+  fixLines.push('');
+  fixLines.push('## Per-file fix list (deps / labels / source-or-data only)');
+  fixLines.push('');
+  fixLines.push('`relative-source` hits are summarized above. Below: drop');
+  fixLines.push('dep/label or stub the deleted package.');
+  fixLines.push('');
 
   const editByFile = new Map();
   for (const h of uniqueGn) {
@@ -510,31 +523,33 @@ function main() {
     const note = deleteFiles.has(file)
       ? ' *(omitted from ninja inputs — keep this build file and edit)*'
       : '';
-    lines.push(`### \`${file}\`${note}`);
-    lines.push('');
-    lines.push(`| Line | Type | Reference | Deleted path | Fix |`);
-    lines.push(`|---:|---|---|---|---|`);
+    fixLines.push(`### \`${file}\`${note}`);
+    fixLines.push('');
+    fixLines.push(`| Line | Type | Reference | Deleted path | Fix |`);
+    fixLines.push(`|---:|---|---|---|---|`);
     for (const h of fileHits) {
-      lines.push(
+      fixLines.push(
         `| ${h.line} | \`${h.type}\` | \`${h.ref.replace(/\|/g, '\\|')}\` | \`${h.deleted.replace(/\|/g, '\\|')}\` | ${fixAdvice(h.type)} |`,
       );
     }
-    lines.push('');
+    fixLines.push('');
   }
 
-  lines.push('## How to apply');
-  lines.push('');
-  lines.push('1. Subtract **Part 1** paths from the delete set (or regenerate the');
-  lines.push('   scan after marking them kept).');
-  lines.push('2. Work **Part 2** in directory batches: stub or drop imports/deps,');
-  lines.push('   clear unused `sources`, `e build`, update `REMOVED.md`.');
-  lines.push('3. Re-run `node purge/scan-fixes.mjs` after large batches.');
-  lines.push('4. False negatives remain: grit/Python `exec_script`, generated');
-  lines.push('   copies, and anything not spelled as `//` or a relative source.');
-  lines.push('');
+  fixLines.push('## How to apply');
+  fixLines.push('');
+  fixLines.push('1. Subtract keep-overrides from the delete set.');
+  fixLines.push('2. Work this file in directory batches: stub or drop deps,');
+  fixLines.push('   clear unused `sources`, `e build`, update `REMOVED.md`.');
+  fixLines.push('3. Re-run `node purge/scan-fixes.mjs` after large batches.');
+  fixLines.push('4. False negatives remain: grit/Python `exec_script`, generated');
+  fixLines.push('   copies, and anything not spelled as `//` or a relative source.');
+  fixLines.push('');
 
-  fs.writeFileSync(OUT_MD, lines.join('\n'), 'utf8');
-  console.error(`wrote ${OUT_MD} (${fs.statSync(OUT_MD).size} bytes)`);
+  fs.writeFileSync(OUT_KEEP, keepLines.join('\n'), 'utf8');
+  fs.writeFileSync(OUT_FIX, fixLines.join('\n'), 'utf8');
+  if (fs.existsSync(OUT_OLD)) fs.unlinkSync(OUT_OLD);
+  console.error(`wrote ${OUT_KEEP} (${fs.statSync(OUT_KEEP).size} bytes)`);
+  console.error(`wrote ${OUT_FIX} (${fs.statSync(OUT_FIX).size} bytes)`);
   console.error(
     `keep-overrides=${keepOverrides.size} gnHits=${uniqueGn.length} buildFiles=${byFile.size}`,
   );
