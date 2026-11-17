@@ -28,9 +28,10 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
   Android) only for platform cuts.
 - **Purge test (locked):** keep a path only if a **Hallu developer
   environment** needs it (build + run Hallu). If not needed → delete. If
-  something else in the tree still references it → change that code so
-  Hallu builds without it, then delete. “Chromium/ChromeOS still builds
-  every target” is not a keep reason.
+  something else in the tree still references it → **unhook** that
+  reference or **restore the real file** — do not plant empty stubs.
+  Details: [`purge/unused by electron purge/README.md`](../purge/unused%20by%20electron%20purge/README.md).
+  “Chromium/ChromeOS still builds every target” is not a keep reason.
 - **Order:** (1) save pending capture edit (2) rename (3) update configs/docs
   (4) purge in small phases with rebuild proof (5) create orphan GitHub repo
   and push (6) only then RAM/CPU work.
@@ -76,7 +77,8 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
   still know about this folder.”
 - After each risky delete: `e build` from `C:\hallulium\src` must still
   produce a Hallu-running runtime. If gen/build fails only because of a
-  leftover import/data_dep, fix or stub that reference, then keep it deleted.
+  leftover import/data_dep, **unhook** that reference (or restore real
+  sources) — no new empty stubs — then keep the unused tree deleted.
 - Expect Hallu still needs core browser pieces (Blink, `cc`, viz, `gpu`,
   `v8`, and whatever `third_party` those link). Delete them only if you
   have replaced that need.

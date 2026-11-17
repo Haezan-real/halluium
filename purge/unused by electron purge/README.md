@@ -16,10 +16,26 @@ node "purge/unused by electron purge/scan-unrelated.mjs"
 node "purge/unused by electron purge/scan-fixes.mjs"
 ```
 
-Delete in batches with keep-overrides subtracted and stubs from the reference
-fix map. **Do not wait for a full `e build` per batch** — one giant compile
-at the end (optional cheap `gn gen` between large batches). Cost: harder to
-bisect a final failure.
+Delete in batches with keep-overrides subtracted. **Do not wait for a full
+`e build` per batch** — one giant compile at the end (optional cheap
+`gn gen` between large batches). Cost: harder to bisect a final failure.
+
+## When the build still asks for a deleted path (locked)
+
+Phases 01–14 left many hollow `BUILD.gn` / empty-file **stubs**. That
+approach is **retired** for new work — empty “ghost” stubs shadow real
+headers (e.g. `*_export.h`, grit) and caused a day of whack-a-mole.
+
+On a missing-file / missing-dep failure, pick **one**:
+
+1. **Unhook** — edit `BUILD.gn` / deps / includes so the Electron graph no
+   longer asks for the path, then leave it deleted; or
+2. **Restore real** — `git checkout` / DEPS clone the actual sources if
+   this host still needs them to link.
+
+Do **not** plant new empty stubs to silence ninja. Existing stubs may
+still be on disk from older phases; prefer deleting nested/shadowing ones
+and unhooking or restoring rather than adding more.
 
 ## Phases
 

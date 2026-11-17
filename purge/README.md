@@ -5,7 +5,7 @@ Purge work is split into **stages**. Each stage can contain multiple **phases**.
 | Stage | Contents |
 |---|---|
 | [`phone purge/`](phone%20purge/) | Phases 01–11 + DevTools/password-manager extra (already applied on disk) |
-| [`unused by electron purge/`](unused%20by%20electron%20purge/) | Scan maps for ~11 GB of src not in the Release `electron.exe` ninja inputs |
+| [`unused by electron purge/`](unused%20by%20electron%20purge/) | Scan maps for ~11 GB of src not in the Release `electron.exe` ninja inputs. **Post-cut rule:** unhook or restore real — no new empty stubs (see that README). |
 
 ## Apply (phone purge stage)
 

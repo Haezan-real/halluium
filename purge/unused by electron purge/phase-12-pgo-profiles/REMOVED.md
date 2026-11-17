@@ -22,3 +22,9 @@ In `electron/build/args/release.gn`:
 Hallu-dev-env does not need profile-guided optimization. Binary size/perf of
 the next `e build` may differ slightly from a PGO Release (usually a bit
 larger / less tuned), unrelated to the unused-source deletes.
+
+After the first `e build` attempt, ninja still wanted the old
+`*.pgo.txt` state files to refresh `build.ninja`. Re-added **tiny stub**
+`*.pgo.txt` (+ empty builtins profile placeholders) under
+`electron/build/pgo_profiles/` so gn/ninja can regenerate with
+`chrome_pgo_phase = 0`. The multi‑hundred‑MB `.profdata` files stay gone.
