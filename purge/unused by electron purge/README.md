@@ -37,6 +37,24 @@ Do **not** plant new empty stubs to silence ninja. Existing stubs may
 still be on disk from older phases; prefer deleting nested/shadowing ones
 and unhooking or restoring rather than adding more.
 
+### Tooling
+
+| Script | Role |
+|---|---|
+| [`_find-hallulium-stubs.mjs`](_find-hallulium-stubs.mjs) | **Read-only** list of ghost stubs (safe during a live `ninja`) |
+| [`_unhook-path.mjs`](_unhook-path.mjs) | Dry-run / `--apply` remove a path from `BUILD.gn` lists so ninja stops asking |
+| [`_annihilate-stubs.mjs`](_annihilate-stubs.mjs) | Delete content ghosts (keeps hollow `BUILD.gn`/`.gni`) |
+| [`_scrub-missing-sources.mjs`](_scrub-missing-sources.mjs) | Safer scrub of missing `sources` entries (still can break `gn gen` if overused) |
+
+**Do not `--apply` unhook / mass-scrub while Electron ninja is running.**
+Nov 2025: annihilated ~16k content stubs; a full BUILD scrub broke `gn gen`,
+so `BUILD.gn` was restored from git while ghosts stayed deleted. Prefer
+per-path unhook or `git checkout` restore when the loop prints
+`NEED_UNHOOK_OR_RESTORE`.
+
+The `%TEMP%\hallulium_build_until_sync.mjs` loop no longer auto-creates
+empty stubs (restore / DEPS clone only; else exit for unhook).
+
 ## Phases
 
 | Phase | Folder | Status |

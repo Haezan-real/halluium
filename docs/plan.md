@@ -7,30 +7,75 @@ this file is.
 
 ## Goal
 
-Hallulium is Hallu's engine: Chromium plus Electron, owned and trimmed for
-Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
+**Hallu is one product.** The entry point is **`hallu.exe`**: the native
+shell that runs Blink → Skia → the TypeScript/HTML DOM (and, in dev, can
+start Vite). There is no separate product called “hallulium,” “electron,”
+or “chromium” for users or for how we talk about the app. Runtime
+optimizations (RAM, CPU) come **after** the source purge.
+
+Under the hood the tree is still a trimmed Chromium/Electron-derived
+engine until purge + rename land; that is implementation debt, not the
+product model.
 
 ## Decisions (locked)
 
-- **Name:** hallulium = the whole engine tree (extra `l`; was briefly
-  `halluium` / `C:\electron-42`).
+- **Product model (locked):** abolish the Hallu-vs-shell split. Hallu **is**
+  the shell. Ship/run **`hallu.exe`**. No mental “hallulium runs Hallu.”
+  Dev: `hallu.exe` is also how you enter the app (including launching Vite
+  when that is wired).
+- **Native shape (locked):** `hallu.exe` = Blink → Skia → TS/HTML DOM hybrid
+  (shell + app). Easy/medium pure logic is ported to **C++ and compiled to
+  DLLs** (or static libs) that `hallu.exe` loads **in-process**. Ranked port
+  list and DLL split: [`cpp-port.md`](cpp-port.md). Not WASM-first; not a
+  separate math process.
+- **Shell execution (locked):** do **not** hand-extract Blink→Skia (spiderweb).
+  Unit of work = an **embed build target** (`content_shell` and/or current
+  Electron host) whose deps GN/Ninja already define. Brand that host
+  `hallu.exe`, load Hallu, then shrink **that** closure. How-to:
+  [`shell-hybrid.md`](shell-hybrid.md).
+- **Timescale (locked):** “Possible?” means **days, one week max** for a
+  bet — not years. Hallu MVP ship target ≈ **one month**. No from-scratch
+  HTML/CSS engine, no multi-year Blink rewrite. Prefer polish + cut scope
+  on the stack that already runs.
+- **Refactor gate (locked):** any engine/UI refactor must be **≤ 2 days**,
+  and must preserve **every** existing Hallu feature/edge case (app stays
+  identical). A rewrite is allowed only if it meets both: full parity **and**
+  ≤ 2 days — which rules out native/Qt/ImGui/Blink-extract/Token Burner as
+  near-term work. Allowed: branding (`hallu.exe`), wiring, polish, bugfixes,
+  light packaging trim on the **current** host.
+- **Engine taste (wanted):** hate shipping “full Chrome”; want roughly
+  **V8 + Blink→Skia** (live HTML/CSS/JS) only. **Conflict note:** that thinner
+  host is the right long-term taste, but it **does not** clear the ≤2-day +
+  full-parity gate (Electron APIs / Node / paks Hallu uses). Resolve by either
+  relaxing time/parity for a `content`-shaped `hallu.exe`, or staying on the
+  current host until after ship.
+- **Size goal:** aspire to a smaller runtime; **&lt;50 MB total with Blink/V8
+  still inside is not realistic** (current dist ~400 MB, host exe ~220 MB).
+  Sub‑50 MB means a **non‑Chromium** UI stack (or a radically different
+  product). Near-term size work = cut unused pak/ICU/locales/ffmpeg fat,
+  not “Blink in 50 MB.”
+- **Token Burner 3000 (parked):** post-revenue autonomous TS↔C++ UI grind
+  (screenshots + port). Bookmark only until Hallu ships/makes money —
+  [`token-burner-3000.md`](token-burner-3000.md). Not the MVP path.
+- **Name (legacy path, until move):** engine checkout still at
+  `C:\hallulium` for now (was `halluium` / `C:\electron-42`). Target
+  layout later: everything under Hallu (e.g. `C:\hallu`) with **`hallu.exe`**
+  as the binary name — not `hallulium.exe` / `electron.exe`.
 - **GitHub (docs):** `Haezan-real/hallulium-docs` — plan, purge log, apply
-  script only. Not the Chromium tree. (Earlier names `halluium` /
-  `hallulium` for this docs repo redirect here.)
-- **GitHub (engine, later):** orphan import may go to a separate
-  `Haezan-real/hallulium` when ready; no Chromium commit chain.
+  script only. Not the engine tree. (Rename docs repo when convenient.)
+- **GitHub (engine, later):** orphan import as Hallu engine repo when ready;
+  no Chromium commit chain. Name should match Hallu, not “hallulium.”
 - **Binaries:** never commit `out/`, `*.exe`, `*.dll`, build products; gitignore them.
-- **Hallu git:** never add the hallulium source tree to the Hallu repo.
-- **Disk:** engine lives at `C:\hallulium` (real rename done; no junction).
-- **Disk (later):** optional move Hallu to `C:\hallu` and nest engine at
-  `C:\hallu\bin\hallulium`. Not part of current work.
+- **Hallu git:** never add the engine source tree to the Hallu app repo
+  until an explicit monorepo decision.
+- **Disk:** engine lives at `C:\hallulium` today (real rename done; no junction).
 - **Keep macOS:** never purge Mac / Darwin / Cocoa source; phone (iOS,
   Android) only for platform cuts.
 - **Purge test (locked):** keep a path only if a **Hallu developer
   environment** needs it (build + run Hallu). If not needed → delete. If
-  something else in the tree still references it → **unhook** that
-  reference or **restore the real file** — do not plant empty stubs.
-  Details: [`purge/unused by electron purge/README.md`](../purge/unused%20by%20electron%20purge/README.md).
+  something still references it → unhook or restore real (no empty stubs).
+  Full rule:
+  [`purge/unused by electron purge/README.md`](../purge/unused%20by%20electron%20purge/README.md).
   “Chromium/ChromeOS still builds every target” is not a keep reason.
 - **Order:** (1) save pending capture edit (2) rename (3) update configs/docs
   (4) purge in small phases with rebuild proof (5) create orphan GitHub repo
@@ -38,15 +83,21 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 ## Status
 
-- **Current phase:** aggressive purge under the Hallu-dev-env test
-- **Last done:** Fresh `e build` after rename path fix; Hallu live-smoke
-  passed on the new binary. Built exe renamed to **`hallulium.exe`**
-  (also in `runtime/` and Hallu `node_modules/electron/dist/` via
-  `path.txt`).
-- **Next action:** Keep purging under the Hallu-dev-env test; after each
-  engine build, sync `out/Release` runtime files into `runtime/` and
-  Hallu `dist` as **`hallulium.exe`** (not `electron.exe`).
-- **Blocked on:** nothing
+- **Current phase:** shell hybrid — `hallu.exe` is the Electron host and
+  the Hallu launcher. Purge phases 01–14, DevTools, and password_manager
+  cuts are done.
+- **Last done:** Branded the host `hallu` / `Hallu` (day icon already on
+  `electron.ico`). `ninja electron` wrote `hallu.exe`. Synced the exe and
+  its dlls/paks into the Hallu repo root (`bin/scripts/syncHalluHost.mjs`);
+  `resources/app` junctions to `bin` so a bare launch loads Hallu. If there
+  is no production bundle, `main.cjs` starts Vite on 5173 and does not
+  touch a server already there. Live smoke: title Hallu, MEDIA POOL /
+  VIEWER / TIMELINE via the root `hallu.exe`.
+- **Next action:** Shrink the host closure only while `hallu.exe` still
+  launches the editor. Math DLLs stay later. Engine source stays at
+  `C:\hallulium` (Hallu's path has spaces; `out\Release` is ~76 GB).
+  One-click rebuild is `compile.ps1` in the Hallu root.
+- **Blocked on:** nothing for launch
 
 ## Paths
 
@@ -56,11 +107,11 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 | Chromium source | `C:\hallulium\src` |
 | Electron nested repo | `C:\hallulium\src\electron` |
 | Build output (gitignored) | `C:\hallulium\src\out` |
-| Built host binary | `C:\hallulium\src\out\Release\hallulium.exe` (rename from ninja’s `electron.exe` after build) |
-| Runtime copy | `C:\hallulium\runtime\` (`hallulium.exe` + dlls/paks) |
-| Hallu uses | `hallu/bin/node_modules/electron/dist/hallulium.exe` (`path.txt` = `hallulium.exe`) |
+| Built host binary | `C:\hallulium\src\out\Release\hallu.exe` |
+| Hallu runs | repo-root `hallu.exe` + dlls/paks (`resources/app` → `bin`) |
+| Build command | `h build` (also `hallulium`, still `e build`) |
 | Build-tools config | `C:\Users\zeela\.electron_build_tools\configs\evm.hallu-42.json` (`root`) |
-| Docs / progress git checkout | `C:\halluium-repo` → `Haezan-real/hallulium-docs` |
+| Docs / progress git checkout | `C:\halluium-repo` (rename to `C:\hallulium-docs` when unlocked) → `Haezan-real/hallulium-docs` |
 | Hallu app | still `...\code\hallu` until a later move |
 
 ## Branches
@@ -75,10 +126,10 @@ Hallu only. Runtime optimizations (RAM, CPU) come **after** the source purge.
 
 - **Hallu-dev-env test** is the gate (see Decisions). Not “does Chromium
   still know about this folder.”
-- After each risky delete: `e build` from `C:\hallulium\src` must still
+- After each risky delete: `h build` from `C:\hallulium\src` must still
   produce a Hallu-running runtime. If gen/build fails only because of a
-  leftover import/data_dep, **unhook** that reference (or restore real
-  sources) — no new empty stubs — then keep the unused tree deleted.
+  leftover import/data_dep, unhook or restore real (no empty stubs) — see
+  [`purge/unused by electron purge/README.md`](../purge/unused%20by%20electron%20purge/README.md).
 - Expect Hallu still needs core browser pieces (Blink, `cc`, viz, `gpu`,
   `v8`, and whatever `third_party` those link). Delete them only if you
   have replaced that need.
