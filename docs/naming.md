@@ -18,7 +18,7 @@ do not delete it.
 ## What the program is called
 
 - Finished host exe: **`hallu.exe`**
-- Hallu runs: repo-root `hallu.exe` (synced from `out/Release` with its dlls)
+- Hallu runs: `app/hallu.exe` (synced from `out/Release` with its dlls and packs; the `app` folder uses the day icon)
 - Ninja target name is still `electron` (internal). `project_name` is `hallu`, so the file on disk is `hallu.exe`.
 - Windows exe icon: Hallu day (`bin/assets/icons/app/hallu_day.ico`), baked in as
   `electron/shell/browser/resources/win/electron.ico` for builds.

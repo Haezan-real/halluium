@@ -86,17 +86,19 @@ product model.
 - **Current phase:** shell hybrid — `hallu.exe` is the Electron host and
   the Hallu launcher. Purge phases 01–14, DevTools, and password_manager
   cuts are done.
-- **Last done:** Branded the host `hallu` / `Hallu` (day icon already on
-  `electron.ico`). `ninja electron` wrote `hallu.exe`. Synced the exe and
-  its dlls/paks into the Hallu repo root (`bin/scripts/syncHalluHost.mjs`);
-  `resources/app` junctions to `bin` so a bare launch loads Hallu. If there
-  is no production bundle, `main.cjs` starts Vite on 5173 and does not
-  touch a server already there. Live smoke: title Hallu, MEDIA POOL /
-  VIEWER / TIMELINE via the root `hallu.exe`.
-- **Next action:** Shrink the host closure only while `hallu.exe` still
-  launches the editor. Math DLLs stay later. Engine source stays at
-  `C:\hallulium` (Hallu's path has spaces; `out\Release` is ~76 GB).
-  One-click rebuild is `compile.ps1` in the Hallu root.
+- **Last done:** Square proof passed (19 Nov 2026, 15:52): magenta
+  `(255, 43, 214)`, green `(57, 255, 20)`, cyan excluded (page
+  `(14, 3, 43)`). Liquid-glass script `bin/tests/hdcCapture.test.mjs` then
+  passed on the capture: under the time widget, viewer, media, tool,
+  timeline, background, a clip `(57, 255, 20)`, and the playneedle
+  `(0, 240, 255)` were in the picture, and a magenta marker on each spot
+  came back exact. The quad dump was removed and `out\Release\hallu.exe`
+  relinked at 16:14. `app/hallu.exe` was not replaced.
+- **Next action:** HDC loop. Read `docs/protocol.md` in this docs repo
+  first, every turn, including after a summary. The glass canvas read back
+  empty on the hidden test window; confirm those same pixels in
+  `.shader-torus` on a window whose GPU surface is presenting. Shrink the
+  host closure only while `hallu.exe` still launches the editor.
 - **Blocked on:** nothing for launch
 
 ## Paths
@@ -108,7 +110,7 @@ product model.
 | Electron nested repo | `C:\hallulium\src\electron` |
 | Build output (gitignored) | `C:\hallulium\src\out` |
 | Built host binary | `C:\hallulium\src\out\Release\hallu.exe` |
-| Hallu runs | repo-root `hallu.exe` + dlls/paks (`resources/app` → `bin`) |
+| Hallu runs | `app/hallu.exe` + dlls/paks (`app/resources/app` → `bin`; folder icon is the day icon) |
 | Build command | `h build` (also `hallulium`, still `e build`) |
 | Build-tools config | `C:\Users\zeela\.electron_build_tools\configs\evm.hallu-42.json` (`root`) |
 | Docs / progress git checkout | `C:\halluium-repo` (rename to `C:\hallulium-docs` when unlocked) → `Haezan-real/hallulium-docs` |
